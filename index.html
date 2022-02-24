@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Link Fix</title>
+    <style>
+      :root {
+        --colorBgMain: #fff;
+        --colorBgSecondary: #f2f2f2;
+        --colorBgLink: #0969da;
+        --colorTextMain: #000;
+        --colorTextLink: #0969da;
+        --colorBorderMain: #58a6ff;
+        --colorBorderSecondary: #c9d1d9;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --colorBgMain: #0d1117;
+          --colorBgSecondary: #161b22;
+          --colorBgLink: #1f6feb;
+          --colorTextMain: #c9d1d9;
+          --colorTextLink: #58a6ff;
+          --colorBorderMain: #58a6ff;
+          --colorBorderSecondary: #30363d;
+        }
+      }
+
+      html {
+        background: var(--colorBgMain);
+        color: var(--colorTextMain);
+        font-family: Helvetica, Arial;
+      }
+
+      * {
+        box-sizing: border-box;
+        font-size: 18px;
+        font-family: monospace;
+      }
+
+      textarea,
+      input {
+        display: block;
+        width: 100%;
+        margin-bottom: 20px;
+        padding: 10px 15px;
+      }
+
+      textarea {
+        height: 190px;
+      }
+
+      textarea,
+      input,
+      button {
+        background: var(--colorBgSecondary);
+        color: var(--colorTextMain);
+        border: 1px solid var(--colorBorderSecondary);
+        outline: none;
+      }
+
+      textarea:focus,
+      input:focus,
+      button:focus,
+      textarea:hover,
+      input:hover,
+      button:hover {
+        border-color: var(--colorBorderMain);
+        outline: none;
+        opacity: 1;
+      }
+
+      button {
+        padding: 10px 20px;
+        margin-right: 20px;
+        margin-bottom: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      button[type="submit"] {
+        background: var(--colorBgLink);
+        color: var(--colorTextMain);
+      }
+
+      a {
+        color: var(--colorTextLink);
+      }
+    </style>
+  </head>
+  <body>
+    <h1></h1>
+    <form onSubmit="return onGo();">
+      <input
+        required
+        id="input"
+        placeholder="Enter URL to fix"
+        onblur="sessionStorage.setItem('url', this.value);"
+      />
+      <div id="output" style="display: none"></div>
+      <div style="display: flex; margin-bottom: 15px">
+        <button type="submit" onclick="window.onGo()">Go</button>
+        <button type="button" onclick="window.onShowFixLinkBookmark()">
+          Show Bookmarklet
+        </button>
+        <button type="button" onclick="viewSource()">View Source</button>
+      </div>
+    </form>
+    <script>
+      window.viewSource = () => {
+        location.href =
+          "https://github.com/synle/fix-tracking-link/blob/main/index.html";
+      };
+
+      (() => {
+        function cleanupUrl(str) {
+          return str
+            .replace(/^http[s]*:/, "")
+            .replace(/^[\/]+/, "")
+            .trim();
+        }
+
+        // seeking alpha
+        function isSeekingAlphaLink(url) {
+          return url.includes("seekingalpha");
+        }
+        function fixSeekingAlphaLink(url) {
+          // https://seekingalpha.com/amp/article/4278986-simple-path-to-early-retirement-investing
+          // https://seekingalpha.com/article/4278986-simple-path-to-early-retirement-investing
+          // https://seekingalpha.com/news/3702883-splunk-analysts-cut-price-targets-after-earnings-with-too-many-moving-parts
+          url = cleanupUrl(
+            url
+              .replace("seekingalpha.com/amp/", "")
+              .replace("seekingalpha.com/", "")
+          );
+          return `https://seekingalpha.com/amp/${url}`;
+        }
+
+        // cnbc
+        function isCnbcLink(url) {
+          return url.includes("cnbc.com");
+        }
+        function fixCnbcLink(url) {
+          // https://www.cnbc.com/amp/2021/05/18/yellen-pushes-higher-taxes-stronger-unions-more-competition-to-us-chamber.html
+          url = cleanupUrl(
+            url
+              .replace("www.cnbc.com", "")
+              .replace("cnbc.com", "")
+              .replace("amp", "")
+          );
+          return `https://www.cnbc.com/amp/${url}`;
+        }
+
+        // fool
+        function isFoolLink(url) {
+          return url.includes("fool.com");
+        }
+        function fixFoolLink(url) {
+          // https://www.fool.com/amp/investing/2021/05/19/an-att-dividend-cut-is-coming-buy-this-telecom-ins/
+          url = cleanupUrl(
+            url
+              .replace("www.fool.com", "")
+              .replace("fool.com", "")
+              .replace("amp", "")
+          );
+          return `https://www.fool.com/${url}`;
+        }
+
+        // amazon
+        function isAmazonLink(url) {
+          return url.includes("amazon.com");
+        }
+        function fixAmazonLink(url) {
+          // https://www.amazon.com/gp/product/B07GTMGKYV?creative=9325&camp=1789&tag=dealnewscom&m=ATVPDKIKX0DER&psc=1&ascsubtag=385qwzf25qx45o1cdgj3eK1ghXIRwjfb
+          url = url.substr(url.indexOf("/product/"));
+          url = url.substr(0, url.indexOf("?"));
+
+          url = cleanupUrl(url.replace("product/", "").replace("/", ""));
+
+          setOutput(`url`);
+
+          return url;
+        }
+
+        // isdotomi
+        function isDotomi(url) {
+          return url.includes("cj.dotomi.com");
+        }
+        function fixDotomiLink(url) {
+          return url.replace("cj.dotomi.com", "track.cj.akadns.net");
+        }
+
+        // ad.doubleclick.net
+        function isAdDoubleClickNet(url) {
+          return url.includes("ad.doubleclick.net");
+        }
+        function fixAdDoubleClickNet(url) {
+          // https://ad.doubleclick.net/ddm/clk/428147350;230262577;d?https://www.staples.com/webapp/wcs/stores/servlet/StaplesBeFree?storeId=10001&CJURL=/Staples-Kelburne-Luxura-Office-Chair-Brown/product_2554454&AID=10435034&PID=552179&SID=c05u0c1cwebp0l1cdgiy7ok5pnucSHju&cvosrc=affiliate.cj.552179&cvo_campaign=Coupon&cm_mmc=CJ-_-552179-_-552179-_-10435034&CID=AFF:552179:552179:10435034&CJPIXEL=CJPIXEL&cjevent=3da90323958f11ec805095600a1c0e14
+          url = url.substr(url.indexOf("?") + 1);
+          return url;
+        }
+
+        // set output
+        function setOutput(html) {
+          document.querySelector("#output").innerHTML = html;
+          document.querySelector("#output").style.display =
+            html.length > 0 ? "block" : "hidden";
+        }
+
+        // start
+        window.onGo = function onGo() {
+          try {
+            let url;
+            let shouldHandleRedirect = true;
+
+            url = document.querySelector("#input").value.trim() || "";
+
+            if (false) {
+              // dummy
+            } else if (isAdDoubleClickNet(url)) {
+              url = fixAdDoubleClickNet(url);
+            } else if (isDotomi(url)) {
+              url = fixDotomiLink(url);
+            } else if (isSeekingAlphaLink(url)) {
+              url = fixSeekingAlphaLink(url);
+            } else if (isCnbcLink(url)) {
+              url = fixCnbcLink(url);
+            } else if (isFoolLink(url)) {
+              url = fixFoolLink(url);
+            } else if (isAmazonLink(url)) {
+              url = fixAmazonLink(url);
+              setOutput(url);
+              shouldHandleRedirect = false; // for amazon link, just return the product id
+            } else if (
+              url.indexOf("http") === 0 ||
+              url.indexOf("https") === 0
+            ) {
+              // don't do anything with regular url
+            } else {
+              url = decodeURIComponent(url)
+                .match(/&[a-z]+=http[s]*:\/\/[a-z0-9:?=&.\/-]+/gi)[0]
+                .match(/http[s]*:\/\/[a-z0-9:?=&.\/-]+/gi)[0];
+            }
+
+            if (shouldHandleRedirect) {
+              setOutput(`<a href="${url}" target="_blank">${url}</a>`);
+
+              if (url.includes("http")) {
+                location.href = url;
+
+                document.body.innerHTML = `<h3>Loading page</h3>`;
+
+                const anchor = document.createElement("a");
+                anchor.innerText = url;
+                anchor.href = url;
+                document.body.append(anchor);
+              }
+            }
+          } catch (err) {
+            console.log(err);
+          }
+
+          return false;
+        };
+
+        window.onShowFixLinkBookmark = () => {
+          const fixLinkAppUrl = "https://synle.github.io/fix-tracking-link";
+          const source =
+            "javascript:" +
+            encodeURIComponent(
+              `
+          (function(){
+            try{
+              try{
+                location.href = '${fixLinkAppUrl}/#' + location.href
+              } catch(err){
+                location.href = '${fixLinkAppUrl}'
+              }
+            } catch(err){
+              alert('Error: ' + err);
+            }
+          })();
+        `.trim()
+            );
+
+          let bookmarkDom = document.querySelector("#bookmark");
+          if (!document.querySelector("#bookmark")) {
+            bookmarkDom = document.createElement("textarea");
+            bookmarkDom.id = "bookmark";
+            bookmarkDom.addEventListener("blur", () => {
+              bookmarkDom.remove();
+            });
+            bookmarkDom.addEventListener("focus", () => {
+              bookmarkDom.select();
+              document.execCommand("copy");
+            });
+            document.body.append(bookmarkDom);
+          }
+          bookmarkDom.value = source;
+          bookmarkDom.focus();
+        };
+
+        // use hash url for referrer
+        let defaultUrl =
+          location.hash.substr(1) ||
+          document.referrer ||
+          sessionStorage.getItem("url") ||
+          "";
+
+        if (!defaultUrl.includes("synle.github.io")) {
+          document.querySelector("#input").value = defaultUrl;
+        }
+
+        const URL_MATCHERS = [isSeekingAlphaLink, isCnbcLink, isFoolLink];
+
+        if (
+          URL_MATCHERS.some((matcher) =>
+            matcher(document.querySelector("#input").value)
+          )
+        ) {
+          onGo();
+        }
+
+        document.querySelector("#input").focus();
+
+        // getting and setting the page title
+        try {
+          document.querySelector("h1").innerText = document.location.href
+            .match(/[a-z-A-Z0-9]+\/[a-z-A-Z0-9]+.html/)[0]
+            .trim();
+        } catch (err) {}
+      })();
+    </script>
+  </body>
+</html>
