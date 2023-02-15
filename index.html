@@ -42,7 +42,6 @@
       input {
         display: block;
         width: 100%;
-        margin-bottom: 20px;
         padding: 10px 15px;
       }
 
@@ -87,11 +86,16 @@
       a {
         color: var(--colorTextLink);
       }
+
+      #form {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
     </style>
   </head>
   <body>
-    <h1></h1>
-    <form onSubmit="return onGo();">
+    <form id='form' onSubmit="return onGo();" autocomplete="off">
       <input
         required
         id="input"
@@ -99,7 +103,7 @@
         onblur="sessionStorage.setItem('url', this.value);"
       />
       <div id="output" style="display: none"></div>
-      <div style="display: flex; margin-bottom: 15px">
+      <div style="display: flex;">
         <button type="submit" onclick="window.onGo()">Go</button>
         <button type="button" onclick="window.onShowFixLinkBookmark()">
           Show Bookmarklet
@@ -195,10 +199,16 @@
         function isAdDoubleClickNet(url) {
           return url.includes("ad.doubleclick.net");
         }
+
         function fixAdDoubleClickNet(url) {
           // https://ad.doubleclick.net/ddm/clk/428147350;230262577;d?https://www.staples.com/webapp/wcs/stores/servlet/StaplesBeFree?storeId=10001&CJURL=/Staples-Kelburne-Luxura-Office-Chair-Brown/product_2554454&AID=10435034&PID=552179&SID=c05u0c1cwebp0l1cdgiy7ok5pnucSHju&cvosrc=affiliate.cj.552179&cvo_campaign=Coupon&cm_mmc=CJ-_-552179-_-552179-_-10435034&CID=AFF:552179:552179:10435034&CJPIXEL=CJPIXEL&cjevent=3da90323958f11ec805095600a1c0e14
           url = url.substr(url.indexOf("?") + 1);
           return url;
+        }
+
+        // use archive today
+        function isArchiveToday(url){
+          return url.includes("marketwatch.com");
         }
 
         // set output
@@ -232,29 +242,22 @@
               url = fixAmazonLink(url);
               setOutput(url);
               shouldHandleRedirect = false; // for amazon link, just return the product id
-            } else if (
-              url.indexOf("http") === 0 ||
-              url.indexOf("https") === 0
-            ) {
-              // don't do anything with regular url
             } else {
-              url = decodeURIComponent(url)
-                .match(/&[a-z]+=http[s]*:\/\/[a-z0-9:?=&.\/-]+/gi)[0]
-                .match(/http[s]*:\/\/[a-z0-9:?=&.\/-]+/gi)[0];
+              url = `https://archive.ph/submit/?url=${url}`
             }
 
             if (shouldHandleRedirect) {
               setOutput(`<a href="${url}" target="_blank">${url}</a>`);
 
               if (url.includes("http")) {
-                location.href = url;
-
                 document.body.innerHTML = `<h3>Loading page</h3>`;
 
                 const anchor = document.createElement("a");
                 anchor.innerText = url;
                 anchor.href = url;
                 document.body.append(anchor);
+
+                location.href = url;
               }
             }
           } catch (err) {
