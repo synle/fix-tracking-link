@@ -38,6 +38,10 @@
         font-family: monospace;
       }
 
+      h1,h2,h3,h4,h5,h6{
+        margin: 0;
+      }
+
       textarea,
       input {
         display: block;
@@ -87,7 +91,7 @@
         color: var(--colorTextLink);
       }
 
-      #form {
+      body, #form {
         display: flex;
         flex-direction: column;
         gap: 2rem;
@@ -95,15 +99,16 @@
     </style>
   </head>
   <body>
-    <form id="form" onSubmit="return onGo();" autocomplete="off">
+    <form id='form' onSubmit="return onGo();" autocomplete="off">
       <input
         required
         id="input"
         placeholder="Enter URL to fix"
         onblur="sessionStorage.setItem('url', this.value);"
+        autocomplete="off"
       />
       <div id="output" style="display: none"></div>
-      <div style="display: flex">
+      <div style="display: flex;">
         <button type="submit" onclick="window.onGo()">Go</button>
         <button type="button" onclick="window.onShowFixLinkBookmark()">
           Show Bookmarklet
@@ -207,7 +212,7 @@
         }
 
         // use archive today
-        function isArchiveToday(url) {
+        function isArchiveToday(url){
           return url.includes("marketwatch.com");
         }
 
@@ -243,21 +248,21 @@
               setOutput(url);
               shouldHandleRedirect = false; // for amazon link, just return the product id
             } else {
-              url = `https://archive.ph/submit/?url=${url}`;
+              url = `https://archive.ph/submit/?url=${url}`
             }
 
             if (shouldHandleRedirect) {
               setOutput(`<a href="${url}" target="_blank">${url}</a>`);
 
               if (url.includes("http")) {
-                document.body.innerHTML = `<h3>Loading page</h3>`;
+                document.body.innerHTML = `<h3>Loading Page</h3>`;
 
                 const anchor = document.createElement("a");
                 anchor.innerText = url;
                 anchor.href = url;
                 document.body.append(anchor);
 
-                location.href = url;
+                // location.href = url;
               }
             }
           } catch (err) {
