@@ -95,7 +95,7 @@
     </style>
   </head>
   <body>
-    <form id='form' onSubmit="return onGo();" autocomplete="off">
+    <form id="form" onSubmit="return onGo();" autocomplete="off">
       <input
         required
         id="input"
@@ -103,7 +103,7 @@
         onblur="sessionStorage.setItem('url', this.value);"
       />
       <div id="output" style="display: none"></div>
-      <div style="display: flex;">
+      <div style="display: flex">
         <button type="submit" onclick="window.onGo()">Go</button>
         <button type="button" onclick="window.onShowFixLinkBookmark()">
           Show Bookmarklet
@@ -207,7 +207,7 @@
         }
 
         // use archive today
-        function isArchiveToday(url){
+        function isArchiveToday(url) {
           return url.includes("marketwatch.com");
         }
 
@@ -243,7 +243,7 @@
               setOutput(url);
               shouldHandleRedirect = false; // for amazon link, just return the product id
             } else {
-              url = `https://archive.ph/submit/?url=${url}`
+              url = `https://archive.ph/submit/?url=${url}`;
             }
 
             if (shouldHandleRedirect) {
