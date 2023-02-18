@@ -239,7 +239,8 @@
 
             if (false) {
               // dummy
-            } if (isAmazonLink(url)) {
+            }
+            if (isAmazonLink(url)) {
               url = fixAmazonLink(url);
               setOutput(url);
               shouldHandleRedirect = false; // for amazon link, just return the product id
