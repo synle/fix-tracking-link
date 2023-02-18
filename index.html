@@ -239,17 +239,7 @@
 
             if (false) {
               // dummy
-            } else if (isAdDoubleClickNet(url)) {
-              url = fixAdDoubleClickNet(url);
-            } else if (isDotomi(url)) {
-              url = fixDotomiLink(url);
-            } else if (isSeekingAlphaLink(url)) {
-              url = fixSeekingAlphaLink(url);
-            } else if (isCnbcLink(url)) {
-              url = fixCnbcLink(url);
-            } else if (isFoolLink(url)) {
-              url = fixFoolLink(url);
-            } else if (isAmazonLink(url)) {
+            } if (isAmazonLink(url)) {
               url = fixAmazonLink(url);
               setOutput(url);
               shouldHandleRedirect = false; // for amazon link, just return the product id
