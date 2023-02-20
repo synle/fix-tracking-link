@@ -187,15 +187,23 @@
           return url.includes("amazon.com");
         }
         function fixAmazonLink(url) {
-          // https://www.amazon.com/gp/product/B07GTMGKYV?creative=9325&camp=1789&tag=dealnewscom&m=ATVPDKIKX0DER&psc=1&ascsubtag=385qwzf25qx45o1cdgj3eK1ghXIRwjfb
-          url = url.substr(url.indexOf("/product/"));
-          url = url.substr(0, url.indexOf("?"));
+          // if(url.includes('/dp/')){
+          //   // https://www.amazon.com/dp/B015ED7QNQ/ref=redir_mobile_desktop?_encoding=UTF8&aaxitk=edc1bc5c24ebe4011ae79854af33d345&content-id=amzn1.sym.7dd77237-72be-4809-b5b5-d553eab7ad9d%3Aamzn1.sym.7dd77237-72be-4809-b5b5-d553eab7ad9d&hsa_cr_id=5184293880801&pd_rd_plhdr=t&pd_rd_r=bc798cfb-ebf2-4526-a0e6-187a6d038fd8&pd_rd_w=LWFw9&pd_rd_wg=rJLF8&qid=1676735985&ref_=sbx_be_s_sparkle_mcd_asin_0_img&sr=1-1-9e67e56a-6f64-441f-a281-df67fc737124
+          //   url = url.substr(url.indexOf('.com/') + 5)
+          //   url = url.substr(url.indexOf('/') + 1)
+          //   url = url.substr(0, url.indexOf('/') - 1)
+          // } else {
+          //   // https://www.amazon.com/gp/product/B07GTMGKYV?creative=9325&camp=1789&tag=dealnewscom&m=ATVPDKIKX0DER&psc=1&ascsubtag=385qwzf25qx45o1cdgj3eK1ghXIRwjfb
+          //   url = url.substr(url.indexOf("/product/"));
+          //   url = url.substr(0, url.indexOf("?"));
+          //   url = cleanupUrl(url.replace("product/", "").replace("/", ""));
+          // }
 
-          url = cleanupUrl(url.replace("product/", "").replace("/", ""));
+          // return url;
 
-          setOutput(`url`);
+          const productId = url.match(/\/[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]/i)[0].replace(/\//g, '')
 
-          return url;
+          return `https://www.amazon.com/gp/product/${productId}`
         }
 
         // isdotomi
