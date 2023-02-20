@@ -201,13 +201,11 @@
 
           // return url;
 
-          const productId = url
-            .match(
-              /\/[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]/i
-            )[0]
-            .replace(/\//g, "");
 
-          return `https://www.amazon.com/gp/product/${productId}`;
+          // product id is 10 char long
+          const productId = url.match(/\/[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]+/i)[0].replace(/\//g, '')
+
+          return `https://www.amazon.com/gp/product/${productId}`
         }
 
         // isdotomi
@@ -255,7 +253,6 @@
             if (isAmazonLink(url)) {
               url = fixAmazonLink(url);
               setOutput(url);
-              shouldHandleRedirect = false; // for amazon link, just return the product id
             } else {
               url = `https://archive.ph/submit/?url=${url}`;
             }
