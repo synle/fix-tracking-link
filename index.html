@@ -32,7 +32,7 @@
         font-family: Helvetica, Arial;
       }
 
-      body{
+      body {
         margin: 2rem 1rem;
       }
 
@@ -273,10 +273,10 @@
               btnCopy.onclick = () => {
                 navigator.clipboard.writeText(url);
                 btnCopy.innerText = `Copied`;
-              }
+              };
               btnCopy.onblur = () => {
                 btnCopy.innerText = `Copy Link`;
-              }
+              };
               document.body.append(btnCopy);
             }
           } catch (err) {
