@@ -269,10 +269,10 @@
               btnCopy.onclick = () => {
                 navigator.clipboard.writeText(url);
                 btnCopy.innerText = `Copied`;
-              }
+              };
               btnCopy.onblur = () => {
                 btnCopy.innerText = `Copy Link`;
-              }
+              };
               document.body.append(btnCopy);
             }
           } catch (err) {
