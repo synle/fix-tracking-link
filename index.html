@@ -253,7 +253,7 @@
               setOutput(`<a href="${url}" target="_blank">${url}</a>`);
 
               if (url.includes("http")) {
-                document.body.innerHTML = `<h3>Loading Page</h3>`;
+                document.body.innerHTML = `<h3>New Page Link</h3>`;
 
                 const anchor = document.createElement("a");
                 anchor.innerText = url;
@@ -262,6 +262,18 @@
 
                 // location.href = url;
               }
+
+              // added copy button
+              const btnCopy = document.createElement("button");
+              btnCopy.innerText = `Copy Link`;
+              btnCopy.onclick = () => {
+                navigator.clipboard.writeText(url);
+                btnCopy.innerText = `Copied`;
+              }
+              btnCopy.onblur = () => {
+                btnCopy.innerText = `Copy Link`;
+              }
+              document.body.append(btnCopy);
             }
           } catch (err) {
             console.log(err);
