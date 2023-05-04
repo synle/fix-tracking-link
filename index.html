@@ -261,6 +261,7 @@
                 const anchor = document.createElement("a");
                 anchor.innerText = url;
                 anchor.href = url;
+                anchor.style["wordBreak"] = "break-all";
                 document.body.append(anchor);
 
                 // location.href = url;
