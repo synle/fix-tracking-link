@@ -277,6 +277,12 @@
                 btnCopy.innerText = `Copy Link`;
               };
               document.body.append(btnCopy);
+              
+              // auto redirected
+              if(sessionStorage.getItem('autoRedirected') !== url){
+                sessionStorage.setItem('autoRedirected', url)
+                location.href = url
+              }
             }
           } catch (err) {
             console.log(err);
