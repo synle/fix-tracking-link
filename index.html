@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -110,24 +110,25 @@
         gap: 1rem;
       }
 
-      #hist-links{
-          border-collapse: collapse;
-          table-layout: fixed;
-          width: 100%;
+      #hist-links {
+        border-collapse: collapse;
+        table-layout: fixed;
+        width: 100%;
       }
 
-      #hist-links thead{
+      #hist-links thead {
         background: var(--colorBgLink);
         color: var(--colorTextMain);
       }
 
-      #hist-links th, td{
+      #hist-links th,
+      td {
         padding-block: 0.25rem;
         white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      word-break: break-all;
-      height: 1rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: break-all;
+        height: 1rem;
       }
 
       #hist-links tr > th:nth-child(2) {
@@ -138,11 +139,11 @@
         text-align: center;
       }
 
-       #hist-links tr > th:nth-child(3) {
+      #hist-links tr > th:nth-child(3) {
         width: 90px;
       }
 
-       #hist-links tr > td:nth-child(3) {
+      #hist-links tr > td:nth-child(3) {
         text-align: right;
       }
     </style>
@@ -165,7 +166,7 @@
         <button type="button" onclick="viewSource()">View Source</button>
       </div>
       <h3>Historical Links</h3>
-      <table id='hist-links'>
+      <table id="hist-links">
         <thead>
           <tr>
             <th>Original Link</th>
@@ -179,12 +180,16 @@
     </form>
     <script>
       // DAO
-      const DAO = (function(){
+      const DAO = (function () {
         // Open the IndexedDB database
-        const dbName = 'synle-fixlink';
-        const tblName = 'history-links'
+        const dbName = "synle-fixlink";
+        const tblName = "history-links";
         const dbVersion = 1;
-        const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+        const indexedDB =
+          window.indexedDB ||
+          window.mozIndexedDB ||
+          window.webkitIndexedDB ||
+          window.msIndexedDB;
 
         function openDB() {
           return new Promise((resolve, reject) => {
@@ -200,17 +205,26 @@
 
             request.onupgradeneeded = (event) => {
               const db = event.target.result;
-              const objectStore = db.createObjectStore(tblName, { keyPath: "id", autoIncrement: true });
-              objectStore.createIndex("originalLink", "originalLink", { unique: false });
-              objectStore.createIndex("destLink", "destLink", { unique: false });
-              objectStore.createIndex("createdAt", "createdAt", { unique: false });
+              const objectStore = db.createObjectStore(tblName, {
+                keyPath: "id",
+                autoIncrement: true,
+              });
+              objectStore.createIndex("originalLink", "originalLink", {
+                unique: false,
+              });
+              objectStore.createIndex("destLink", "destLink", {
+                unique: false,
+              });
+              objectStore.createIndex("createdAt", "createdAt", {
+                unique: false,
+              });
             };
           });
         }
 
         function addHistoryLink(originalLink, destLink) {
           return openDB()
-            .then(db => {
+            .then((db) => {
               const transaction = db.transaction([tblName], "readwrite");
               const objectStore = transaction.objectStore(tblName);
 
@@ -234,19 +248,22 @@
                 };
               });
             })
-            .then(newHistoryLink => {
-              console.log("New history link added to IndexedDB:", newHistoryLink);
-              return newHistoryLink
+            .then((newHistoryLink) => {
+              console.log(
+                "New history link added to IndexedDB:",
+                newHistoryLink,
+              );
+              return newHistoryLink;
             })
-            .catch(error => {
+            .catch((error) => {
               console.error("Error adding history link to IndexedDB:", error);
-              throw error
+              throw error;
             });
         }
 
         function getAllHistoryLinks() {
           return openDB()
-            .then(db => {
+            .then((db) => {
               const transaction = db.transaction([tblName], "readonly");
               const objectStore = transaction.objectStore(tblName);
 
@@ -262,19 +279,25 @@
                 };
               });
             })
-            .then(historyLinks => {
-              console.log("All history links retrieved from IndexedDB:", historyLinks);
-              return historyLinks
+            .then((historyLinks) => {
+              console.log(
+                "All history links retrieved from IndexedDB:",
+                historyLinks,
+              );
+              return historyLinks;
             })
-            .catch(error => {
-              console.error("Error retrieving history links from IndexedDB:", error);
-              throw error
+            .catch((error) => {
+              console.error(
+                "Error retrieving history links from IndexedDB:",
+                error,
+              );
+              throw error;
             });
         }
 
         function deleteHistoryLink(id) {
           return openDB()
-            .then(db => {
+            .then((db) => {
               const transaction = db.transaction([tblName], "readwrite");
               const objectStore = transaction.objectStore(tblName);
 
@@ -292,21 +315,23 @@
             })
             .then(() => {
               console.log(`History link with ID ${id} deleted from IndexedDB`);
-              return id
+              return id;
             })
-            .catch(error => {
-              console.error(`Error deleting history link with ID ${id} from IndexedDB:`, error);
-              throw error
+            .catch((error) => {
+              console.error(
+                `Error deleting history link with ID ${id} from IndexedDB:`,
+                error,
+              );
+              throw error;
             });
         }
-
 
         return {
           addHistoryLink,
           getAllHistoryLinks,
           deleteHistoryLink,
-        }
-      })()
+        };
+      })();
     </script>
     <script>
       const viewSource = () => {
@@ -334,7 +359,7 @@
           url = cleanupUrl(
             url
               .replace("seekingalpha.com/amp/", "")
-              .replace("seekingalpha.com/", "")
+              .replace("seekingalpha.com/", ""),
           );
           return `https://seekingalpha.com/amp/${url}`;
         }
@@ -349,7 +374,7 @@
             url
               .replace("www.cnbc.com", "")
               .replace("cnbc.com", "")
-              .replace("amp", "")
+              .replace("amp", ""),
           );
           return `https://www.cnbc.com/amp/${url}`;
         }
@@ -364,7 +389,7 @@
             url
               .replace("www.fool.com", "")
               .replace("fool.com", "")
-              .replace("amp", "")
+              .replace("amp", ""),
           );
           return `https://www.fool.com/${url}`;
         }
@@ -380,7 +405,7 @@
           // product id is 10 char long
           const productId = url
             .match(
-              /\/[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]+/i
+              /\/[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]+/i,
             )[0]
             .replace(/\//g, "");
 
@@ -466,7 +491,7 @@
                 btnCopy.innerText = `Copy Link`;
               };
               document.body.append(actions);
-              actions.append(btnCopy)
+              actions.append(btnCopy);
 
               // auto redirected
               if (sessionStorage.getItem("autoRedirected") !== url) {
@@ -475,8 +500,8 @@
               }
             }
 
-            newLink = url
-            DAO.addHistoryLink(oldLink, newLink)
+            newLink = url;
+            DAO.addHistoryLink(oldLink, newLink);
           } catch (err) {
             console.log(err);
           }
@@ -501,7 +526,7 @@
               alert('Error: ' + err);
             }
           })();
-        `.trim()
+        `.trim(),
             );
 
           let bookmarkDom = document.querySelector("#bookmark");
@@ -536,7 +561,7 @@
 
         if (
           URL_MATCHERS.some((matcher) =>
-            matcher(document.querySelector("#input").value)
+            matcher(document.querySelector("#input").value),
           )
         ) {
           onGo();
@@ -545,21 +570,21 @@
         document.querySelector("#input").focus();
 
         // show historical links
-        function updateHistoricalLinksDom(){
-          DAO.getAllHistoryLinks().then(items => {
-            document.querySelector('#hist-links tbody').innerHTML = '';
-            for(const item of items){
-              const {id, originalLink, destLink, createdAt} = item;
+        function updateHistoricalLinksDom() {
+          DAO.getAllHistoryLinks().then((items) => {
+            document.querySelector("#hist-links tbody").innerHTML = "";
+            for (const item of items) {
+              const { id, originalLink, destLink, createdAt } = item;
 
-              const row = document.createElement('tr');
+              const row = document.createElement("tr");
               let cell, anchor;
 
-              cell = document.createElement('td');
-              anchor = document.createElement('a');
+              cell = document.createElement("td");
+              anchor = document.createElement("a");
               anchor.innerText = originalLink;
-              anchor.href = destLink
-              cell.append(anchor)
-              row.append(cell)
+              anchor.href = destLink;
+              cell.append(anchor);
+              row.append(cell);
 
               // cell = document.createElement('td');
               // anchor = document.createElement('a');
@@ -568,25 +593,25 @@
               // cell.append(anchor)
               // row.append(cell)
 
-              cell = document.createElement('td');
+              cell = document.createElement("td");
               row.append(cell);
               cell.innerText = new Date(createdAt).toLocaleString();
 
-              cell = document.createElement('td');
-              anchor = document.createElement('button');
-              anchor.innerText = 'Delete';
-              anchor.type ='button'
+              cell = document.createElement("td");
+              anchor = document.createElement("button");
+              anchor.innerText = "Delete";
+              anchor.type = "button";
               anchor.onclick = (e) => {
                 e.preventDefault();
-                e.stopPropagation()
-                DAO.deleteHistoryLink(id).then(updateHistoricalLinksDom)
-              }
-              cell.append(anchor)
-              row.append(cell)
+                e.stopPropagation();
+                DAO.deleteHistoryLink(id).then(updateHistoricalLinksDom);
+              };
+              cell.append(anchor);
+              row.append(cell);
 
-              document.querySelector('#hist-links tbody').append(row);
+              document.querySelector("#hist-links tbody").append(row);
             }
-          })
+          });
         }
         updateHistoricalLinksDom();
 
