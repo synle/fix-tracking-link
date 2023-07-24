@@ -1,28 +1,14 @@
-name: main-build
-
 on:
   push:
     branches: [master, main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [14.x]
-
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.head_ref }}
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-          registry-url: https://registry.npmjs.org/
-      - run: make format
-      - uses: EndBug/add-and-commit@v8
-        with:
-          message: 'CI / CD - Prettier Automatic Commit'
-        continue-on-error: true
+    # https://github.com/synle/gha-workflows/blob/main/.github/workflows/pr-format-and-commit-code.yml
+    uses: synle/gha-workflows/.github/workflows/pr-format-and-commit-code.yml@main
+    with:
+      os: ubuntu-latest
